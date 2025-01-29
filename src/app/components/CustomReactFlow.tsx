@@ -86,12 +86,27 @@ export default function CustomReactFlow() {
     }
   }, [selectedNode, editName, setNodes])
 
+  const getSubordinateNodes = useCallback((nodeId: string, currentNodes: Node[], currentEdges: Edge[]): string[] => {
+    const directSubordinates = currentEdges.filter((edge) => edge.source === nodeId).map((edge) => edge.target)
+
+    const allSubordinates = [...directSubordinates]
+
+    directSubordinates.forEach((subNodeId) => {
+      allSubordinates.push(...getSubordinateNodes(subNodeId, currentNodes, currentEdges))
+    })
+
+    return allSubordinates
+  }, [])
+
   const handleDeleteNode = useCallback(
     (id: string) => {
-      setNodes((nds) => nds.filter((node) => node.id !== id))
+      setNodes((nds) => {
+        const nodesToDelete = [id, ...getSubordinateNodes(id, nds, edges)]
+        return nds.filter((node) => !nodesToDelete.includes(node.id))
+      })
       setEdges((eds) => eds.filter((edge) => edge.source !== id && edge.target !== id))
     },
-    [setNodes, setEdges],
+    [setNodes, setEdges, edges, getSubordinateNodes],
   )
 
   // @ts-ignore
