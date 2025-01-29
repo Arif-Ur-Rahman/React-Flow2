@@ -1,5 +1,5 @@
 import { Handle, Position } from "reactflow"
-import { Edit } from "lucide-react"
+import { Edit, Trash2 } from "lucide-react"
 
 type DepartmentNodeProps = {
   data: { label: string }
@@ -21,6 +21,16 @@ export default function DepartmentNode({ data, id }: DepartmentNodeProps) {
             }}
           >
             <Edit size={16} className="text-green-500" />
+          </button>
+          <button
+            className="p-1 rounded-full hover:bg-green-100"
+            onClick={(event) => {
+              event.stopPropagation()
+              // @ts-ignore
+              window.deleteNode(id)
+            }}
+          >
+            <Trash2 size={16} className="text-green-500" />
           </button>
         </div>
       </div>
